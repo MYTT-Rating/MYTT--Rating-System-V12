@@ -1,0 +1,44 @@
+name: Move avatars into avatars folder
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  move-avatars:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Move avatar files
+        run: |
+          mkdir -p avatars
+          shopt -s nullglob
+
+          moved=false
+
+          for file in MYTT*.jpg MYTT*.JPG MYTT*.jpeg MYTT*.JPEG MYTT*.png MYTT*.PNG; do
+            if [ -f "$file" ]; then
+              filename=$(basename "$file")
+              base="${filename%.*}"
+              mv "$file" "avatars/${base}.jpg"
+              moved=true
+            fi
+          done
+
+          if [ "$moved" = true ]; then
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git add avatars
+            git add -u
+            git commit -m "Auto move avatar files into avatars folder"
+            git push
+          else
+            echo "No avatar files to move."
+          fi
