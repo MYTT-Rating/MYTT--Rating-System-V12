@@ -32,3 +32,26 @@ footer{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:
 .match-card{border-radius:18px!important;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.035))!important}.match-result{text-transform:uppercase;letter-spacing:.5px}.match-delta-up{color:#86efac!important}.match-delta-down{color:#fca5a5!important}
 @media(max-width:850px){#profileContent{padding:18px}.profile-hero-main{flex-direction:column;text-align:center}.profile-badges{justify-content:center}.profile-stats-pro,.career-grid{grid-template-columns:1fr 1fr!important}.profile-avatar-pro{width:110px!important;height:110px!important}.profile-identity h3{font-size:40px}.modal-card{border-radius:22px!important}}
 @media(max-width:520px){.profile-stats-pro,.career-grid{grid-template-columns:1fr!important}.profile-identity h3{font-size:34px}}
+
+/* MYTT V4 Mobile Close Button Real Fix */
+#profileModal > button,
+#profileModal .close,
+#profileModal .close-btn,
+#profileModal [onclick*="closeProfile"]{
+  position: fixed !important;
+  top: 18px !important;
+  right: 18px !important;
+  width: 72px !important;
+  height: 72px !important;
+  z-index: 2147483647 !important;
+  border-radius: 50% !important;
+  background: rgba(0,0,0,.78) !important;
+  color: #fff !important;
+  font-size: 46px !important;
+  font-weight: 900 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
