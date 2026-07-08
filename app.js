@@ -216,26 +216,4 @@ document.addEventListener("click", function(e){
   setInterval(updateBigClose, 300);
 })();
 
-/* Hide old small profile X */
-(function(){
-  function hideOldProfileX(){
-    const modal = document.getElementById("profileModal");
-    if(!modal) return;
 
-    const buttons = modal.querySelectorAll("button, div, span, a");
-
-    buttons.forEach(el=>{
-      const text = (el.textContent || "").trim();
-      if(text === "×" && el.id !== "mobileBigCloseProfile"){
-        el.style.display = "none";
-        el.style.pointerEvents = "none";
-      }
-    });
-  }
-
-  document.addEventListener("click", function(){
-    setTimeout(hideOldProfileX, 100);
-  });
-
-  setInterval(hideOldProfileX, 300);
-})();
