@@ -55,3 +55,37 @@ footer{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:
   pointer-events: auto !important;
   touch-action: manipulation !important;
 }
+
+/* Mobile close button glass + animation */
+#profileModal > button,
+#profileModal .close,
+#profileModal .close-btn,
+#profileModal [onclick*="closeProfile"]{
+  width: 60px !important;
+  height: 60px !important;
+  font-size: 38px !important;
+
+  background: rgba(25,25,25,.48) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+
+  box-shadow: 0 12px 30px rgba(0,0,0,.35),
+              inset 0 1px 0 rgba(255,255,255,.22) !important;
+
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease !important;
+}
+
+#profileModal > button:active,
+#profileModal .close:active,
+#profileModal .close-btn:active,
+#profileModal [onclick*="closeProfile"]:active{
+  transform: scale(.92) !important;
+  background: rgba(255,255,255,.22) !important;
+}
+
+#profileModal > button:hover,
+#profileModal .close:hover,
+#profileModal .close-btn:hover,
+#profileModal [onclick*="closeProfile"]:hover{
+  transform: scale(1.06) !important;
+}
