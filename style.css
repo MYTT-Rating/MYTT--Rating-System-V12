@@ -5,24 +5,12 @@
 .team-plus{color:var(--muted);font-weight:950}
 @media(max-width:850px){.team-cell{gap:8px}.team-member span{font-size:14px}.team-plus{font-size:13px}}
 
-
-.match-list{display:grid;gap:12px;margin-top:12px}
-.match-card{display:grid;grid-template-columns:52px 1fr;gap:12px;border:1px solid var(--line);border-radius:16px;padding:14px;background:rgba(255,255,255,.055)}
-.match-card.match-win{border-left:4px solid rgba(34,197,94,.9)}
-.match-card.match-loss{border-left:4px solid rgba(239,68,68,.9)}
-.match-avatar{width:46px;height:46px;font-size:20px}
-.match-result{font-weight:950;margin-bottom:4px}
-.match-main{font-size:18px;font-weight:900}
-.match-opponent,.h2h-row span{cursor:pointer;color:#fff;text-decoration:underline;text-decoration-color:rgba(239,68,68,.5);text-underline-offset:3px}
-.match-opponent:hover,.h2h-row span:hover{color:#ff6464}
-.match-score,.match-rating,.match-date,.chart-note{color:var(--muted);margin-top:5px}
-.match-delta-up{color:#86efac;font-weight:950}
-.match-delta-down{color:#fca5a5;font-weight:950}
-.rating-chart{height:170px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.045);padding:10px;margin-top:12px;color:#ef4444}
-.rating-chart svg{width:100%;height:100%}
-.h2h-list{display:grid;gap:10px;margin-top:12px}
-.h2h-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.045)}
-.h2h-row small{color:var(--muted);text-transform:none;letter-spacing:0;margin:0}
-@media(max-width:850px){.match-card{grid-template-columns:42px 1fr;padding:12px}.match-avatar{width:38px;height:38px}.h2h-row{grid-template-columns:1fr auto}.h2h-row small{grid-column:1/-1}}
-
 footer{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;color:var(--muted);padding:34px 20px 46px;border-top:1px solid var(--line)}footer strong{color:#fff}@media(max-width:850px){.topbar{align-items:flex-start;flex-direction:column}.hero{grid-template-columns:1fr;padding-top:44px}.hero-card{min-height:220px}.section-head{flex-direction:column;align-items:flex-start}.cta{width:100%}.info-grid,.profile-stats,.future-grid{grid-template-columns:1fr}.search-result{grid-template-columns:1fr}.players-toolbar{flex-direction:column}table{min-width:860px}td{font-size:16px}}
+
+/* MYTT V3.4 Recent Match Avatar Fix */
+.match-card{display:grid!important;grid-template-columns:54px minmax(0,1fr)!important;gap:12px!important;align-items:start!important;overflow:hidden!important}
+.match-left{width:54px!important;min-width:54px!important;max-width:54px!important}
+.match-avatar{width:46px!important;height:46px!important;min-width:46px!important;max-width:46px!important;min-height:46px!important;max-height:46px!important;border-radius:50%!important;overflow:hidden!important;display:grid!important;place-items:center!important;background:linear-gradient(135deg,#ef4444,#7f1d1d)!important;border:2px solid rgba(255,255,255,.18)!important;font-size:20px!important}
+.match-avatar img{width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;display:block!important;border-radius:50%!important;position:static!important}
+.match-body{min-width:0!important}
+@media(max-width:850px){.match-card{grid-template-columns:42px minmax(0,1fr)!important}.match-left{width:42px!important;min-width:42px!important;max-width:42px!important}.match-avatar{width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important;min-height:38px!important;max-height:38px!important}}

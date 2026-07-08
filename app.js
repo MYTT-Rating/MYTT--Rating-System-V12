@@ -10,112 +10,18 @@ function slug(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"").tr
 function rowToLb(row,type){return{type,rank:row[0]||"-",name:row[1]||"-",rating:row[2]||"-",record:row[3]||"-",winRate:row[4]||"-",peak:row[5]||"-"}}
 function rowToDb(row){return{id:row[0]||"",name:row[1]||"",grip:row[2]||"",hand:row[3]||"",blade:row[4]||"",fh:row[5]||"",bh:row[6]||"",photo:row[7]||"",status:row[8]||"",joined:row[9]||""}}
 
-function rowToMatch(row){
-  return {
-    timestamp: row[0] || "",
-    matchDate: row[1] || "",
-    playerA: row[2] || "",
-    playerB: row[3] || "",
-    winner: row[4] || "",
-    score: row[5] || "",
-    playerABefore: row[6] || "",
-    playerAAfter: row[7] || "",
-    playerBBefore: row[8] || "",
-    playerBAfter: row[9] || "",
-    ratingChange: row[10] || ""
-  };
-}
+function rowToMatch(row){return{timestamp:row[0]||"",matchDate:row[1]||"",playerA:row[2]||"",playerB:row[3]||"",winner:row[4]||"",score:row[5]||"",playerABefore:row[6]||"",playerAAfter:row[7]||"",playerBBefore:row[8]||"",playerBAfter:row[9]||"",ratingChange:row[10]||""}}
 function samePlayer(a,b){return slug(a)===slug(b)}
-function displayDate(value){
-  const text=String(value||"").trim();
-  if(!text)return "-";
-  const d=new Date(text);
-  if(!isNaN(d.getTime())) return d.toLocaleDateString([], {day:"2-digit",month:"short",year:"numeric"});
-  return text;
-}
-function playerMatches(name){
-  return matchResults.filter(m=>samePlayer(m.playerA,name)||samePlayer(m.playerB,name));
-}
-function opponentOf(match,name){
-  if(samePlayer(match.playerA,name))return match.playerB;
-  if(samePlayer(match.playerB,name))return match.playerA;
-  return "";
-}
+function displayDate(value){const text=String(value||"").trim();if(!text)return"-";const d=new Date(text);if(!isNaN(d.getTime()))return d.toLocaleDateString([],{day:"2-digit",month:"short",year:"numeric"});return text}
+function playerMatches(name){return matchResults.filter(m=>samePlayer(m.playerA,name)||samePlayer(m.playerB,name))}
+function opponentOf(match,name){if(samePlayer(match.playerA,name))return match.playerB;if(samePlayer(match.playerB,name))return match.playerA;return""}
 function isWin(match,name){return samePlayer(match.winner,name)}
-function beforeAfter(match,name){
-  if(samePlayer(match.playerA,name))return {before:match.playerABefore,after:match.playerAAfter};
-  if(samePlayer(match.playerB,name))return {before:match.playerBBefore,after:match.playerBAfter};
-  return {before:"",after:""};
-}
-function deltaOf(match,name){
-  const ba=beforeAfter(match,name);
-  const before=Number(ba.before), after=Number(ba.after);
-  if(ba.before!=="" && ba.after!=="" && !isNaN(before) && !isNaN(after)) return after-before;
-  const ch=Number(match.ratingChange);
-  if(match.ratingChange!=="" && !isNaN(ch)) return isWin(match,name)?ch:-ch;
-  return null;
-}
-function opponentAvatarHTML(opponent){
-  const db=findDbByName(opponent);
-  return avatarHTML(db,"match-avatar");
-}
-function recentMatchesHTML(name){
-  const matches=playerMatches(name).slice().reverse().slice(0,10);
-  if(!matches.length)return `<div class="profile-panel"><h3>🕒 Recent Matches</h3><p class="muted">No match history yet.</p></div>`;
-  return `<div class="profile-panel"><h3>🕒 Recent Matches</h3><div class="match-list">${
-    matches.map(m=>{
-      const win=isWin(m,name);
-      const opp=opponentOf(m,name);
-      const ba=beforeAfter(m,name);
-      const delta=deltaOf(m,name);
-      const deltaText=delta===null?"—":(delta>0?"+"+delta:String(delta));
-      const deltaCls=delta===null?"":(delta>=0?"match-delta-up":"match-delta-down");
-      return `<div class="match-card ${win?"match-win":"match-loss"}">
-        <div class="match-left">${opponentAvatarHTML(opp)}</div>
-        <div class="match-body">
-          <div class="match-result">${win?"🟢 Win":"🔴 Loss"}</div>
-          <div class="match-main">vs <span data-player="${encodeURIComponent(opp)}" class="match-opponent">${opp}</span></div>
-          <div class="match-score">🏓 ${m.score||"-"}</div>
-          <div class="match-rating"><span class="${deltaCls}">${deltaText} Rating</span>${ba.before&&ba.after?` · ${ba.before} → ${ba.after}`:""}</div>
-          <div class="match-date">${displayDate(m.matchDate||m.timestamp)}</div>
-        </div>
-      </div>`;
-    }).join("")
-  }</div></div>`;
-}
-function ratingHistoryHTML(name){
-  const list=playerMatches(name);
-  let points=[];
-  list.forEach(m=>{
-    const ba=beforeAfter(m,name);
-    if(ba.before && points.length===0) points.push(Number(ba.before));
-    if(ba.after) points.push(Number(ba.after));
-  });
-  points=points.filter(x=>!isNaN(x));
-  if(points.length<2)return `<div class="profile-panel"><h3>📈 Rating History</h3><p class="muted">Play more matches to build a rating chart.</p></div>`;
-  const min=Math.min(...points), max=Math.max(...points), range=Math.max(1,max-min);
-  const w=520,h=150,pad=18;
-  const coords=points.map((v,i)=>{
-    const x=pad+(i/(points.length-1))*(w-pad*2);
-    const y=h-pad-((v-min)/range)*(h-pad*2);
-    return `${x},${y}`;
-  }).join(" ");
-  return `<div class="profile-panel"><h3>📈 Rating History</h3><div class="rating-chart"><svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${coords}" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="chart-note">${points[0]} → ${points[points.length-1]} · Peak ${max}</div></div>`;
-}
-function headToHeadHTML(name){
-  const map={};
-  playerMatches(name).forEach(m=>{
-    const opp=opponentOf(m,name);
-    if(!opp)return;
-    const key=slug(opp);
-    if(!map[key])map[key]={opp,w:0,l:0,total:0};
-    if(isWin(m,name))map[key].w++;else map[key].l++;
-    map[key].total++;
-  });
-  const rows=Object.values(map).sort((a,b)=>b.total-a.total).slice(0,6);
-  if(!rows.length)return `<div class="profile-panel"><h3>🤝 Head to Head</h3><p class="muted">No head-to-head data yet.</p></div>`;
-  return `<div class="profile-panel"><h3>🤝 Head to Head</h3><div class="h2h-list">${rows.map(r=>`<div class="h2h-row"><span data-player="${encodeURIComponent(r.opp)}">${r.opp}</span><strong>${r.w}-${r.l}</strong><small>${r.total} matches</small></div>`).join("")}</div></div>`;
-}
+function beforeAfter(match,name){if(samePlayer(match.playerA,name))return{before:match.playerABefore,after:match.playerAAfter};if(samePlayer(match.playerB,name))return{before:match.playerBBefore,after:match.playerBAfter};return{before:"",after:""}}
+function deltaOf(match,name){const ba=beforeAfter(match,name);const before=Number(ba.before),after=Number(ba.after);if(ba.before!==""&&ba.after!==""&&!isNaN(before)&&!isNaN(after))return after-before;const ch=Number(match.ratingChange);if(match.ratingChange!==""&&!isNaN(ch))return isWin(match,name)?ch:-ch;return null}
+function opponentAvatarHTML(opponent){const db=findDbByName(opponent);const src=avatarUrl(db);return `<div class="match-avatar">${src?`<img src="${src}" alt="${opponent}" onerror="this.parentElement.textContent='👤'">`:"👤"}</div>`}
+function recentMatchesHTML(name){const matches=playerMatches(name).slice().reverse().slice(0,10);if(!matches.length)return`<div class="profile-panel"><h3>🕒 Recent Matches</h3><p class="muted">No match history yet.</p></div>`;return`<div class="profile-panel"><h3>🕒 Recent Matches</h3><div class="match-list">${matches.map(m=>{const win=isWin(m,name),opp=opponentOf(m,name),ba=beforeAfter(m,name),delta=deltaOf(m,name),deltaText=delta===null?"—":(delta>0?"+"+delta:String(delta)),deltaCls=delta===null?"":(delta>=0?"match-delta-up":"match-delta-down");return`<div class="match-card ${win?"match-win":"match-loss"}"><div class="match-left">${opponentAvatarHTML(opp)}</div><div class="match-body"><div class="match-result">${win?"🟢 Win":"🔴 Loss"}</div><div class="match-main">vs <span data-player="${encodeURIComponent(opp)}" class="match-opponent">${opp}</span></div><div class="match-score">🏓 ${m.score||"-"}</div><div class="match-rating"><span class="${deltaCls}">${deltaText} Rating</span>${ba.before&&ba.after?` · ${ba.before} → ${ba.after}`:""}</div><div class="match-date">${displayDate(m.matchDate||m.timestamp)}</div></div></div>`}).join("")}</div></div>`}
+function ratingHistoryHTML(name){const list=playerMatches(name);let points=[];list.forEach(m=>{const ba=beforeAfter(m,name);if(ba.before&&points.length===0)points.push(Number(ba.before));if(ba.after)points.push(Number(ba.after))});points=points.filter(x=>!isNaN(x));if(points.length<2)return`<div class="profile-panel"><h3>📈 Rating History</h3><p class="muted">Play more matches to build a rating chart.</p></div>`;const min=Math.min(...points),max=Math.max(...points),range=Math.max(1,max-min),w=520,h=150,pad=18;const coords=points.map((v,i)=>`${pad+(i/(points.length-1))*(w-pad*2)},${h-pad-((v-min)/range)*(h-pad*2)}`).join(" ");return`<div class="profile-panel"><h3>📈 Rating History</h3><div class="rating-chart"><svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${coords}" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="chart-note">${points[0]} → ${points[points.length-1]} · Peak ${max}</div></div>`}
+function headToHeadHTML(name){const map={};playerMatches(name).forEach(m=>{const opp=opponentOf(m,name);if(!opp)return;const key=slug(opp);if(!map[key])map[key]={opp,w:0,l:0,total:0};if(isWin(m,name))map[key].w++;else map[key].l++;map[key].total++});const rows=Object.values(map).sort((a,b)=>b.total-a.total).slice(0,6);if(!rows.length)return`<div class="profile-panel"><h3>🤝 Head to Head</h3><p class="muted">No head-to-head data yet.</p></div>`;return`<div class="profile-panel"><h3>🤝 Head to Head</h3><div class="h2h-list">${rows.map(r=>`<div class="h2h-row"><span data-player="${encodeURIComponent(r.opp)}">${r.opp}</span><strong>${r.w}-${r.l}</strong><small>${r.total} matches</small></div>`).join("")}</div></div>`}
 
 function rankLabel(rank){const v=String(rank||"").trim();if(v=="1")return"🥇 1";if(v=="2")return"🥈 2";if(v=="3")return"🥉 3";return v||"-"}
 function avatarUrl(db){if(!db?.id)return"";return `avatars/${db.id}.jpg`}
@@ -160,17 +66,6 @@ function getPlayerList(){const map=new Map();singlesPlayers.forEach(p=>map.set(s
 function renderPlayers(){const grid=document.getElementById("playersGrid");if(!grid)return;const q=(document.getElementById("playersSearch")?.value||"").toLowerCase();const filter=document.getElementById("playersFilter")?.value||"all";let list=getPlayerList();if(filter==="approved")list=list.filter(x=>x.db);if(filter==="leaderboard")list=list.filter(x=>x.source==="leaderboard");if(q)list=list.filter(x=>x.name.toLowerCase().includes(q));if(!list.length){grid.innerHTML=`<p class="loading">No players found.</p>`;return}grid.innerHTML=list.map(x=>`<div class="player-card" data-player="${encodeURIComponent(x.name)}"><div class="player-card-top">${avatarHTML(x.db,"avatar")}<div><h3>${x.name}</h3><p>${x.db?.id||"Leaderboard Player"}</p>${tierHTML(x.lb.rating)}</div></div><div class="mini-stats"><div class="mini-stat"><small>Rating</small><strong>${x.lb.rating}</strong></div><div class="mini-stat"><small>Peak</small><strong>${x.lb.peak}</strong></div><div class="mini-stat"><small>Rank</small><strong>#${x.lb.rank}</strong></div></div><p>🏓 ${x.db?.grip||"-"} · ${x.db?.hand||"-"}</p></div>`).join("")}
 function renderSearch(){const input=document.getElementById("globalSearch"),results=document.getElementById("searchResults");if(!input||!results)return;const q=input.value.trim().toLowerCase();if(!q){results.innerHTML=`<p class="muted">Type a player name to view rating, tier and profile.</p>`;return}const items=getPlayerList().filter(i=>i.name.toLowerCase().includes(q)).slice(0,8);if(!items.length){results.innerHTML=`<p class="muted">No player found.</p>`;return}results.innerHTML=items.map(i=>`<div class="search-result" data-player="${encodeURIComponent(i.name)}"><div class="search-rank">${rankLabel(i.lb.rank)}</div><div><div class="search-name">${i.name}</div><div class="search-meta">${tierHTML(i.lb.rating)} · W-L ${i.lb.record} · Peak ${i.lb.peak}</div></div><div class="search-rating">${i.lb.rating}</div></div>`).join("")}
 function bindEvents(){document.addEventListener("input",e=>{if(e.target.id==="globalSearch")renderSearch();if(e.target.id==="playersSearch")renderPlayers()});document.addEventListener("change",e=>{if(e.target.id==="playersFilter")renderPlayers()});document.addEventListener("click",e=>{const p=e.target.closest("[data-player]");if(p){e.stopPropagation();openProfile(p.dataset.player);}if(e.target.matches("[data-close-modal]"))closeProfile()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProfile()})}
-
-async function loadMatchResults(){
-  if(!config.matchResultsCsv)return;
-  try{
-    const rows=await fetchRows(config.matchResultsCsv);
-    matchResults=rows.map(rowToMatch).filter(m=>m.playerA&&m.playerB);
-  }catch(e){
-    console.error("Failed to load match results",e);
-    matchResults=[];
-  }
-}
-
+async function loadMatchResults(){if(!config.matchResultsCsv)return;try{const rows=await fetchRows(config.matchResultsCsv);matchResults=rows.map(rowToMatch).filter(m=>m.playerA&&m.playerB)}catch(e){console.error("Failed to load match results",e);matchResults=[]}}
 async function loadAll(){await loadPlayerDb();await loadMatchResults();await loadLeaderboard(config.singlesCsv,"singlesBody","singlesStatus","singles","singles");await loadLeaderboard(config.doublesCsv,"doublesBody","doublesStatus","doubles","doubles");renderPlayers();renderSearch()}
 bindEvents();loadAll();setInterval(loadAll,60000);
