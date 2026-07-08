@@ -1,3 +1,10 @@
-# MYTT V3.4
+# MYTT V4.0.1 Profile Pro Sprint 1
 
-Fix Recent Matches avatar size. Avatars are stored in `/avatars/`.
+Added:
+- Profile Header Pro
+- Dashboard-style stat cards
+- Career Summary
+- Rank Progress Pro
+- Achievement v1
+
+Kept compatible with Google Sheets, Apps Script, GitHub Actions, and existing avatars.

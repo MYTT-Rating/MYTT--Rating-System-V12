@@ -29,6 +29,54 @@ function avatarHTML(db,cls="avatar"){const src=avatarUrl(db);return `<div class=
 function findDbByName(name){const s=slug(name);return playerDb.find(p=>slug(p.name)===s)||playerDb.find(p=>slug(p.name).includes(s)||s.includes(slug(p.name)))}
 function findLbByName(name){const s=slug(name);return singlesPlayers.find(p=>slug(p.name)===s)||singlesPlayers.find(p=>slug(p.name).includes(s)||s.includes(slug(p.name)))||{rating:"1500",peak:"1500",rank:"-",record:"0-0",winRate:"-"}}
 
+
+function parseRecord(record){
+  const m=String(record||"0-0").match(/(\d+)\s*-\s*(\d+)/);
+  return {wins:m?Number(m[1]):0, losses:m?Number(m[2]):0};
+}
+function currentStreak(name){
+  const list=playerMatches(name).slice().reverse();
+  if(!list.length)return "-";
+  const firstWin=isWin(list[0],name);
+  let count=0;
+  for(const m of list){ if(isWin(m,name)===firstWin)count++; else break; }
+  return (firstWin?"🔥 W":"L")+count;
+}
+function achievementHTML(lb,name){
+  const rec=parseRecord(lb.record);
+  const rank=Number(lb.rank);
+  const matches=rec.wins+rec.losses;
+  const wins=rec.wins;
+  const list=[];
+  if(wins>0)list.push(["🥇","First Win"]);
+  if(wins>=5)list.push(["🔥","5 Wins"]);
+  if(matches>=10)list.push(["💯","10 Matches"]);
+  if(rank>0&&rank<=3)list.push(["🏆","Top 3"]);
+  if(rank===1)list.push(["👑","Rank #1"]);
+  const upset=playerMatches(name).some(m=>{
+    const ba=beforeAfter(m,name), before=Number(ba.before);
+    const opp=opponentOf(m,name);
+    const oba=beforeAfter(m,opp), ob=Number(oba.before);
+    return isWin(m,name)&&!isNaN(before)&&!isNaN(ob)&&(ob-before)>=80;
+  });
+  if(upset)list.push(["⚡","Giant Killer"]);
+  if(!list.length)list.push(["🌱","New Player"]);
+  return `<div class="profile-panel achievements-panel"><h3>🏅 Achievements</h3><div class="achievement-grid">${list.map(a=>`<div class="achievement"><span>${a[0]}</span><strong>${a[1]}</strong></div>`).join("")}</div></div>`;
+}
+function careerSummaryHTML(lb,name){
+  const rec=parseRecord(lb.record);
+  const matches=rec.wins+rec.losses;
+  return `<div class="profile-panel career-panel"><h3>📜 Career Summary</h3><div class="career-grid">
+    <div><small>Matches</small><strong>${matches}</strong></div>
+    <div><small>Wins</small><strong>${rec.wins}</strong></div>
+    <div><small>Losses</small><strong>${rec.losses}</strong></div>
+    <div><small>Highest Rating</small><strong>${lb.peak||"-"}</strong></div>
+    <div><small>Current Streak</small><strong>${currentStreak(name)}</strong></div>
+    <div><small>Win Rate</small><strong>${lb.winRate||"-"}</strong></div>
+  </div></div>`;
+}
+function profileStatCard(label,value,icon){return `<div class="stat pro-stat"><span>${icon}</span><small>${label}</small><strong>${value}</strong></div>`}
+
 function splitTeamName(teamName){
   const text = String(teamName || "");
   const parts = text
@@ -60,7 +108,44 @@ function makeRow(item){const db=findDbByName(item.name);const tr=document.create
 async function loadLeaderboard(csvUrl,bodyId,statusId,type,label){const body=document.getElementById(bodyId),status=document.getElementById(statusId);try{const rows=await fetchRows(csvUrl);const items=rows.map(row=>rowToLb(row,type));if(type==="singles")singlesPlayers=items;if(type==="doubles")doublesTeams=items;body.innerHTML="";if(!items.length){body.innerHTML=`<tr><td colspan="7" class="loading">No data yet.</td></tr>`;status.textContent="No data";return}items.forEach(item=>body.appendChild(makeRow(item)));status.textContent="Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});renderSearch();renderPlayers()}catch(e){console.error(e);body.innerHTML=`<tr><td colspan="7" class="loading">Failed to load ${label} leaderboard.</td></tr>`;status.textContent="Load failed"}}
 async function loadPlayerDb(){try{const rows=await fetchRows(config.playerDbCsv);const all=rows.map(rowToDb).filter(p=>p.name);playerDb=all.filter(p=>String(p.status).toLowerCase()==="approved");if(!playerDb.length)playerDb=all;renderPlayers()}catch(e){console.error(e);renderPlayers()}}
 function playerItem(name){const db=findDbByName(name);const lb=findLbByName(db?.name||name);return{db,lb,name:db?.name||name}}
-function openProfile(name){const {db,lb,name:playerName}=playerItem(decodeURIComponent(name));document.getElementById("profileContent").innerHTML=`<div class="profile-top">${avatarHTML(db,"profile-avatar")}<div><h3>${playerName}</h3><p>${db?.id||"MYTT Player"} · Rank #${lb.rank}</p>${tierHTML(lb.rating)}</div></div><div class="profile-stats"><div class="stat"><small>Current Rating</small><strong>${lb.rating}</strong></div><div class="stat"><small>Peak Rating</small><strong>${lb.peak}</strong></div><div class="stat"><small>Record</small><strong>${lb.record}</strong></div><div class="stat"><small>Win Rate</small><strong>${lb.winRate}</strong></div></div>${progressHTML(lb.rating)}<div class="profile-panel"><h3>🏓 Player Info</h3><div class="equipment-row"><small>Grip</small><strong>${db?.grip||"-"}</strong></div><div class="equipment-row"><small>Hand</small><strong>${db?.hand||"-"}</strong></div><div class="equipment-row"><small>Blade</small><strong>${db?.blade||"-"}</strong></div><div class="equipment-row"><small>FH Rubber</small><strong>${db?.fh||"-"}</strong></div><div class="equipment-row"><small>BH Rubber</small><strong>${db?.bh||"-"}</strong></div><div class="equipment-row"><small>Member Since</small><strong>${db?.joined||"-"}</strong></div></div>${recentMatchesHTML(playerName)}${ratingHistoryHTML(playerName)}${headToHeadHTML(playerName)}`;document.getElementById("profileModal").classList.remove("hidden")}
+function openProfile(name){
+  const {db,lb,name:playerName}=playerItem(decodeURIComponent(name));
+  const rec=parseRecord(lb.record);
+  const matches=rec.wins+rec.losses;
+  document.getElementById("profileContent").innerHTML=`
+    <section class="profile-hero-pro">
+      <div class="profile-hero-bg"></div>
+      <div class="profile-hero-main">
+        ${avatarHTML(db,"profile-avatar profile-avatar-pro")}
+        <div class="profile-identity">
+          <p class="profile-kicker">MYTT Player Profile</p>
+          <h3>${playerName}</h3>
+          <div class="profile-badges">
+            <span class="id-pill">${db?.id||"MYTT Player"}</span>
+            ${tierHTML(lb.rating)}
+            <span class="rank-pill">Rank #${lb.rank||"-"}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="profile-stats profile-stats-pro">
+      ${profileStatCard("Current Rating",lb.rating,"📊")}
+      ${profileStatCard("Peak Rating",lb.peak,"🚀")}
+      ${profileStatCard("Current Rank",`#${lb.rank||"-"}`,"🏆")}
+      ${profileStatCard("Record",lb.record,"🏓")}
+      ${profileStatCard("Win Rate",lb.winRate,"🎯")}
+      ${profileStatCard("Matches",matches,"📅")}
+    </div>
+    <div class="rank-progress-pro">${progressHTML(lb.rating)}</div>
+    ${careerSummaryHTML(lb,playerName)}
+    <div class="profile-panel"><h3>🏓 Player Info</h3><div class="equipment-row"><small>Grip</small><strong>${db?.grip||"-"}</strong></div><div class="equipment-row"><small>Hand</small><strong>${db?.hand||"-"}</strong></div><div class="equipment-row"><small>Blade</small><strong>${db?.blade||"-"}</strong></div><div class="equipment-row"><small>FH Rubber</small><strong>${db?.fh||"-"}</strong></div><div class="equipment-row"><small>BH Rubber</small><strong>${db?.bh||"-"}</strong></div><div class="equipment-row"><small>Member Since</small><strong>${db?.joined||"-"}</strong></div></div>
+    ${recentMatchesHTML(playerName)}
+    ${ratingHistoryHTML(playerName)}
+    ${headToHeadHTML(playerName)}
+    ${achievementHTML(lb,playerName)}
+  `;
+  document.getElementById("profileModal").classList.remove("hidden");
+}
 function closeProfile(){document.getElementById("profileModal").classList.add("hidden")}
 function getPlayerList(){const map=new Map();singlesPlayers.forEach(p=>map.set(slug(p.name),{source:"leaderboard",db:findDbByName(p.name),lb:p,name:p.name}));playerDb.forEach(db=>{const k=slug(db.name);if(!map.has(k))map.set(k,{source:"approved",db,lb:findLbByName(db.name),name:db.name});else map.get(k).db=db});return [...map.values()].sort((a,b)=>(Number(b.lb.rating)||0)-(Number(a.lb.rating)||0))}
 function renderPlayers(){const grid=document.getElementById("playersGrid");if(!grid)return;const q=(document.getElementById("playersSearch")?.value||"").toLowerCase();const filter=document.getElementById("playersFilter")?.value||"all";let list=getPlayerList();if(filter==="approved")list=list.filter(x=>x.db);if(filter==="leaderboard")list=list.filter(x=>x.source==="leaderboard");if(q)list=list.filter(x=>x.name.toLowerCase().includes(q));if(!list.length){grid.innerHTML=`<p class="loading">No players found.</p>`;return}grid.innerHTML=list.map(x=>`<div class="player-card" data-player="${encodeURIComponent(x.name)}"><div class="player-card-top">${avatarHTML(x.db,"avatar")}<div><h3>${x.name}</h3><p>${x.db?.id||"Leaderboard Player"}</p>${tierHTML(x.lb.rating)}</div></div><div class="mini-stats"><div class="mini-stat"><small>Rating</small><strong>${x.lb.rating}</strong></div><div class="mini-stat"><small>Peak</small><strong>${x.lb.peak}</strong></div><div class="mini-stat"><small>Rank</small><strong>#${x.lb.rank}</strong></div></div><p>🏓 ${x.db?.grip||"-"} · ${x.db?.hand||"-"}</p></div>`).join("")}
