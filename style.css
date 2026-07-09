@@ -237,3 +237,378 @@ footer{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:
     width:56px;
   }
 }
+
+/* =======================================================
+   MYTT V5 HOMEPAGE HERO
+======================================================= */
+
+.hero-v5{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:70px;
+    align-items:center;
+    padding:90px 0;
+}
+
+.hero-copy-v5{
+    position:relative;
+    z-index:2;
+}
+
+.hero-title-v5{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin:25px 0;
+    line-height:.95;
+}
+
+.hero-title-v5 span{
+    display:block;
+    font-size:78px;
+    font-weight:950;
+    letter-spacing:-3px;
+    color:#fff;
+    transition:.35s;
+}
+
+.hero-title-v5 span:hover{
+    transform:translateX(8px);
+}
+
+.hero-title-v5 .rank-word{
+    color:#ef4444;
+    text-shadow:
+        0 0 20px rgba(239,68,68,.5),
+        0 0 40px rgba(239,68,68,.3);
+}
+
+.hero-intro-v5{
+    max-width:560px;
+    font-size:18px;
+    line-height:1.8;
+    margin-bottom:35px;
+}
+
+.hero-rank-card-v5{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:34px;
+
+    padding:35px;
+
+    background:
+    radial-gradient(circle at top left,
+    rgba(239,68,68,.18),
+    transparent 30%),
+
+    linear-gradient(
+    145deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.02));
+
+    border:1px solid rgba(239,68,68,.28);
+
+    box-shadow:
+    0 30px 80px rgba(0,0,0,.45);
+}
+
+.rank-card-glow{
+
+    position:absolute;
+
+    width:300px;
+    height:300px;
+
+    right:-100px;
+    top:-120px;
+
+    border-radius:50%;
+
+    background:rgba(239,68,68,.18);
+
+    filter:blur(80px);
+}
+
+.rank-card-head-v5{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+    margin-bottom:35px;
+}
+
+.rank-card-head-v5 p{
+
+    color:#ef4444;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+
+    font-weight:900;
+
+    margin-bottom:6px;
+}
+
+.rank-card-head-v5 h2{
+
+    font-size:34px;
+
+    font-weight:900;
+}
+
+.current-rating-v5{
+
+    text-align:right;
+}
+
+.current-rating-v5 small{
+
+    color:#888;
+}
+
+.current-rating-v5 strong{
+
+    display:block;
+
+    font-size:48px;
+
+    margin-top:5px;
+}
+
+.homepage-rank-road{
+
+    display:flex;
+
+    align-items:center;
+
+    overflow-x:auto;
+
+    gap:18px;
+
+    padding-bottom:12px;
+}
+
+.homepage-rank-road::-webkit-scrollbar{
+
+    height:8px;
+}
+
+.homepage-rank-road::-webkit-scrollbar-thumb{
+
+    background:#ef4444;
+
+    border-radius:999px;
+}
+
+.home-rank-node{
+
+    min-width:110px;
+
+    text-align:center;
+
+    opacity:.45;
+
+    transition:.35s;
+}
+
+.home-rank-node.active{
+
+    opacity:1;
+}
+
+.home-rank-node.active div{
+
+    animation:heroPulse 1.8s infinite;
+}
+
+.home-rank-node div{
+
+    width:60px;
+
+    height:60px;
+
+    margin:auto;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:50%;
+
+    font-size:30px;
+
+    background:rgba(255,255,255,.08);
+
+    border:2px solid rgba(255,255,255,.12);
+}
+
+.home-rank-node span{
+
+    display:block;
+
+    margin-top:10px;
+
+    font-weight:900;
+
+    font-size:14px;
+}
+
+.home-rank-node small{
+
+    color:#999;
+
+    font-size:12px;
+}
+
+.home-rank-line{
+
+    flex:1;
+
+    min-width:45px;
+
+    height:5px;
+
+    border-radius:999px;
+
+    background:
+    linear-gradient(
+    90deg,
+    #ef4444,
+    #f59e0b,
+    #fde047);
+
+    opacity:.6;
+}
+
+.you-are-here-v5{
+
+    margin-top:35px;
+
+    text-align:center;
+}
+
+.you-are-here-v5 span{
+
+    display:block;
+
+    color:#ef4444;
+
+    font-size:30px;
+
+    animation:bounceArrow 1.2s infinite;
+}
+
+.you-are-here-v5 strong{
+
+    display:block;
+
+    margin-top:5px;
+
+    font-size:20px;
+}
+
+.you-are-here-v5 small{
+
+    color:#888;
+}
+
+@keyframes heroPulse{
+
+0%{
+
+transform:scale(1);
+
+box-shadow:0 0 15px rgba(239,68,68,.4);
+
+}
+
+50%{
+
+transform:scale(1.12);
+
+box-shadow:
+0 0 30px rgba(239,68,68,.8);
+
+}
+
+100%{
+
+transform:scale(1);
+
+box-shadow:0 0 15px rgba(239,68,68,.4);
+
+}
+
+}
+
+@keyframes bounceArrow{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-8px);
+
+}
+
+}
+
+@media(max-width:1100px){
+
+.hero-v5{
+
+grid-template-columns:1fr;
+
+}
+
+.hero-title-v5 span{
+
+font-size:58px;
+
+}
+
+}
+
+@media(max-width:700px){
+
+.hero-title-v5 span{
+
+font-size:42px;
+
+}
+
+.hero-rank-card-v5{
+
+padding:24px;
+
+}
+
+.rank-card-head-v5{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:18px;
+
+}
+
+.current-rating-v5{
+
+text-align:left;
+
+}
+
+}
