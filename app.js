@@ -246,5 +246,3 @@ document.addEventListener("click", function(e){
 
   setInterval(updateBigClose, 300);
 })();
-
-
