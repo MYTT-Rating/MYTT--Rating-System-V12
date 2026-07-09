@@ -3,7 +3,38 @@ const TIERS=[{min:-Infinity,name:"Novice",icon:"🌿",cls:"tier-novice",next:150
 function getTier(r){const rating=Number(r)||0;let t=TIERS[0];for(const tier of TIERS){if(rating>=tier.min)t=tier}return t}
 function tierHTML(r){const t=getTier(r);return `<span class="tier-pill ${t.cls}">${t.icon} ${t.name}</span>`}
 function progressHTML(r){const rating=Number(r)||0;const t=getTier(r);if(!t.next)return `<div class="tier-progress"><div class="tier-progress-top"><span>${t.icon} ${t.name}</span><span>Top Tier</span></div><div class="progress-track"><div class="progress-fill" style="width:100%"></div></div><div class="progress-note">You have reached MYTT Champion tier.</div></div>`;const base=t.min===-Infinity?1400:t.min;const pct=Math.max(0,Math.min(100,((rating-base)/(t.next-base))*100));const next=TIERS.find(x=>x.min===t.next);return `<div class="tier-progress"><div class="tier-progress-top"><span>${t.icon} ${t.name}</span><span>${next.icon} ${next.name}</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><div class="progress-note">${rating} / ${t.next} · ${t.next-rating} pts to ${next.name}</div></div>`}
-function parseCSV(t){const r=[];let row=[],cell="",q=false;for(let i=0;i<t.length;i++){const c=t[i],n=t[i+1];if(c=='"'&&q&&n=='"'){cell+='"';i++}else if(c=='"'){q=!q}else if(c==","&&!q){row.push(cell.trim());cell=""}else if((c=="\n"||c=="\r")&&!q){if(cell||row.length){row.push(cell.trim());r.push(row);row=[];cell=""}if(c=="\r"&&n=="\n")i++}else cell+=c}if(cell||row.length){row.push(cell.trim());r.push(row)}return r}
+
+function rankJourneyHTML(r){
+  const rating = Number(r) || 0;
+  const tiers = TIERS.filter(t => t.min >= 1500);
+  const currentTier = getTier(rating);
+
+  return `<div class="rank-journey-panel">
+    <div class="rank-journey-head">
+      <div>
+        <small>MYTT RANK JOURNEY</small>
+        <h3>Climb to the Top</h3>
+      </div>
+      <strong>${rating}</strong>
+    </div>
+
+    <div class="rank-road">
+      ${tiers.map(t=>{
+        const reached = rating >= t.min;
+        const current = currentTier.name === t.name;
+        return `<div class="rank-node ${reached ? "reached" : ""} ${current ? "current" : ""}">
+          <div class="rank-dot">${t.icon}</div>
+          <span>${t.name}</span>
+          <small>${t.min}</small>
+        </div>`;
+      }).join("")}
+    </div>
+
+    <div class="rank-journey-note">
+      ${progressHTML(r)}
+    </div>
+  </div>`;
+}function parseCSV(t){const r=[];let row=[],cell="",q=false;for(let i=0;i<t.length;i++){const c=t[i],n=t[i+1];if(c=='"'&&q&&n=='"'){cell+='"';i++}else if(c=='"'){q=!q}else if(c==","&&!q){row.push(cell.trim());cell=""}else if((c=="\n"||c=="\r")&&!q){if(cell||row.length){row.push(cell.trim());r.push(row);row=[];cell=""}if(c=="\r"&&n=="\n")i++}else cell+=c}if(cell||row.length){row.push(cell.trim());r.push(row)}return r}
 function cleanRows(rows){return rows.filter(row=>row.some(cell=>String(cell).trim()!="")).slice(1)}
 async function fetchRows(csvUrl){const url=csvUrl+(csvUrl.includes("?")?"&":"?")+"t="+Date.now();const res=await fetch(url);if(!res.ok)throw new Error("Unable to load CSV");return cleanRows(parseCSV(await res.text()))}
 function slug(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"").trim()}
@@ -136,7 +167,7 @@ function openProfile(name){
       ${profileStatCard("Win Rate",lb.winRate,"🎯")}
       ${profileStatCard("Matches",matches,"📅")}
     </div>
-    <div class="rank-progress-pro">${progressHTML(lb.rating)}</div>
+    ${rankJourneyHTML(lb.rating)}
     ${careerSummaryHTML(lb,playerName)}
     <div class="profile-panel"><h3>🏓 Player Info</h3><div class="equipment-row"><small>Grip</small><strong>${db?.grip||"-"}</strong></div><div class="equipment-row"><small>Hand</small><strong>${db?.hand||"-"}</strong></div><div class="equipment-row"><small>Blade</small><strong>${db?.blade||"-"}</strong></div><div class="equipment-row"><small>FH Rubber</small><strong>${db?.fh||"-"}</strong></div><div class="equipment-row"><small>BH Rubber</small><strong>${db?.bh||"-"}</strong></div><div class="equipment-row"><small>Member Since</small><strong>${db?.joined||"-"}</strong></div></div>
     ${recentMatchesHTML(playerName)}
