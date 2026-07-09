@@ -724,3 +724,111 @@ text-align:left;
     overflow-x:auto !important;
   }
 }
+
+/* ===== MYTT Rank Journey Neon Road Style ===== */
+
+.homepage-rank-road{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:repeat(9,1fr) !important;
+  gap:0 !important;
+  overflow:visible !important;
+  padding:28px 0 18px !important;
+}
+
+.homepage-rank-road::before{
+  content:"" !important;
+  position:absolute !important;
+  left:5% !important;
+  right:5% !important;
+  top:58px !important;
+  height:8px !important;
+  border-radius:999px !important;
+  background:linear-gradient(
+    90deg,
+    #ff2d2d,
+    #ff7a18,
+    #ffe600,
+    #18ff6d,
+    #00eaff,
+    #8b5cf6,
+    #ff3ddc
+  ) !important;
+  box-shadow:0 0 22px rgba(239,68,68,.75) !important;
+  z-index:0 !important;
+}
+
+.home-rank-line{
+  display:none !important;
+}
+
+.home-rank-node{
+  position:relative !important;
+  z-index:2 !important;
+  min-width:0 !important;
+  flex:none !important;
+  opacity:1 !important;
+  text-align:center !important;
+}
+
+.home-rank-node div{
+  width:86px !important;
+  height:86px !important;
+  margin:0 auto 14px !important;
+  display:grid !important;
+  place-items:center !important;
+  border-radius:50% !important;
+  font-size:40px !important;
+  background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.16),rgba(0,0,0,.75)) !important;
+  border:3px solid rgba(255,255,255,.28) !important;
+  box-shadow:0 0 22px rgba(255,255,255,.18) !important;
+}
+
+.home-rank-node:nth-of-type(1) div{border-color:#ff3b3b!important;box-shadow:0 0 32px #ff3b3b!important}
+.home-rank-node:nth-of-type(3) div{border-color:#ff7a18!important;box-shadow:0 0 24px rgba(255,122,24,.7)!important}
+.home-rank-node:nth-of-type(5) div{border-color:#ffd400!important;box-shadow:0 0 24px rgba(255,212,0,.7)!important}
+.home-rank-node:nth-of-type(7) div{border-color:#ff8a00!important;box-shadow:0 0 24px rgba(255,138,0,.7)!important}
+.home-rank-node:nth-of-type(9) div{border-color:#fff000!important;box-shadow:0 0 24px rgba(255,240,0,.7)!important}
+.home-rank-node:nth-of-type(11) div{border-color:#00f5ff!important;box-shadow:0 0 24px rgba(0,245,255,.7)!important}
+.home-rank-node:nth-of-type(13) div{border-color:#8b5cf6!important;box-shadow:0 0 24px rgba(139,92,246,.7)!important}
+.home-rank-node:nth-of-type(15) div{border-color:#ff9f68!important;box-shadow:0 0 24px rgba(255,159,104,.7)!important}
+.home-rank-node:nth-of-type(17) div{border-color:#ff3ddc!important;box-shadow:0 0 24px rgba(255,61,220,.7)!important}
+
+.home-rank-node.active div{
+  animation:heroPulse 1.6s infinite !important;
+  border-color:#fff !important;
+  box-shadow:
+    0 0 20px #fff,
+    0 0 40px #ff2d2d,
+    0 0 70px rgba(239,68,68,.85) !important;
+}
+
+.home-rank-node span{
+  display:block !important;
+  margin-top:10px !important;
+  font-weight:950 !important;
+  font-size:16px !important;
+  color:#fff !important;
+  text-shadow:0 2px 10px rgba(0,0,0,.7) !important;
+}
+
+.home-rank-node small{
+  display:block !important;
+  margin-top:8px !important;
+  color:#ff3b3b !important;
+  font-size:16px !important;
+  font-weight:950 !important;
+}
+
+@media(max-width:900px){
+  .homepage-rank-road{
+    grid-template-columns:repeat(9,100px) !important;
+    overflow-x:auto !important;
+  }
+
+  .homepage-rank-road::before{
+    left:45px !important;
+    right:auto !important;
+    width:820px !important;
+  }
+}
