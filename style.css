@@ -92,7 +92,7 @@ footer{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:
 
 
 /* =========================================================
-   MYTT V5 HERO â€” consolidated final version
+   MYTT V5 HERO Ã¢â‚¬â€ consolidated final version
 ========================================================= */
 
 .hero-v5{
@@ -463,4 +463,200 @@ footer{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:
     border-bottom:1px solid var(--line);
   }
   .feature-strip article:last-child{border-bottom:0}
+}
+
+/* =========================================================
+   MYTT V5.2 HERO POLISH â€” desktop fit + precise neon road
+   ========================================================= */
+
+main{
+  width:min(1580px,96%);
+}
+
+.hero-v5{
+  grid-template-columns:minmax(300px,.62fr) minmax(880px,1.72fr) !important;
+  gap:34px !important;
+  align-items:center !important;
+  padding:42px 0 34px !important;
+}
+
+.hero-copy-v5{
+  min-width:0;
+}
+
+.hero-title-v5 span{
+  font-size:clamp(52px,5.35vw,86px) !important;
+  line-height:.88 !important;
+  letter-spacing:-3px !important;
+}
+
+.hero-tagline{
+  max-width:480px;
+}
+
+.cta-grid-v5{
+  max-width:540px;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+
+.cta-grid-v5 .cta{
+  min-width:0;
+  padding:14px 15px !important;
+}
+
+.cta-grid-v5 .cta strong{
+  font-size:13px !important;
+}
+
+.cta-grid-v5 .cta small{
+  font-size:10px !important;
+}
+
+.hero-rank-card-v5{
+  min-width:0;
+  padding:28px 28px 24px !important;
+  overflow:hidden !important;
+}
+
+.homepage-rank-road{
+  width:100% !important;
+  justify-content:space-between !important;
+  align-items:flex-start !important;
+  padding:25px 12px 50px !important;
+  overflow:visible !important;
+}
+
+.home-rank-node{
+  flex:0 0 72px !important;
+  width:72px !important;
+  min-width:72px !important;
+}
+
+.home-rank-orb{
+  width:62px !important;
+  height:62px !important;
+  font-size:29px !important;
+  margin-bottom:10px !important;
+}
+
+.home-rank-node span{
+  min-height:31px !important;
+  font-size:11px !important;
+  line-height:1.1 !important;
+}
+
+.home-rank-node small{
+  margin-top:4px !important;
+  font-size:12px !important;
+}
+
+.home-rank-line{
+  flex:1 1 auto !important;
+  min-width:16px !important;
+  max-width:none !important;
+  height:6px !important;
+  margin-top:28px !important;
+}
+
+.home-rank-line::before,
+.home-rank-line::after{
+  width:9px !important;
+  height:6px !important;
+}
+
+.home-rank-line::before{left:-6px !important}
+.home-rank-line::after{right:-6px !important}
+
+.you-marker{
+  top:105px !important;
+  font-size:14px !important;
+}
+
+.you-marker em{
+  font-size:8px !important;
+}
+
+.hero-progress-card{
+  margin-top:2px !important;
+}
+
+@media(max-width:1380px){
+  .hero-v5{
+    grid-template-columns:minmax(280px,.58fr) minmax(760px,1.55fr) !important;
+    gap:26px !important;
+  }
+
+  .hero-title-v5 span{
+    font-size:clamp(48px,5vw,76px) !important;
+  }
+
+  .home-rank-node{
+    flex-basis:66px !important;
+    width:66px !important;
+    min-width:66px !important;
+  }
+
+  .home-rank-orb{
+    width:58px !important;
+    height:58px !important;
+    font-size:27px !important;
+  }
+
+  .home-rank-node span{
+    font-size:10px !important;
+  }
+
+  .home-rank-node small{
+    font-size:11px !important;
+  }
+
+  .home-rank-line{
+    min-width:12px !important;
+    margin-top:26px !important;
+  }
+}
+
+@media(max-width:1180px){
+  .hero-v5{
+    grid-template-columns:1fr !important;
+  }
+
+  .hero-copy-v5{
+    max-width:760px;
+  }
+
+  .hero-title-v5 span{
+    font-size:clamp(54px,9vw,88px) !important;
+  }
+
+  .homepage-rank-road{
+    justify-content:flex-start !important;
+    overflow-x:auto !important;
+    padding-bottom:55px !important;
+  }
+
+  .home-rank-node{
+    flex:0 0 76px !important;
+    width:76px !important;
+    min-width:76px !important;
+  }
+
+  .home-rank-line{
+    flex:0 0 28px !important;
+    min-width:28px !important;
+    max-width:28px !important;
+  }
+}
+
+@media(max-width:600px){
+  .cta-grid-v5{
+    grid-template-columns:1fr !important;
+    max-width:none;
+  }
+
+  .homepage-rank-road{
+    padding-left:4px !important;
+    padding-right:4px !important;
+  }
 }
